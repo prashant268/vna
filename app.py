@@ -14,17 +14,16 @@ cache = MemoryCache()
 
 # from vanna.local import LocalContext_OpenAI
 # vn = LocalContext_OpenAI()
+from vanna.openai.openai_chat import OpenAI_Chat
+from vanna.chromadb.chromadb_vector import ChromaDB_VectorStore
+class MyVanna(ChromaDB_VectorStore, OpenAI_Chat):
+    def __init__(self, config=None):
+        ChromaDB_VectorStore.__init__(self, config=config)
+        OpenAI_Chat.__init__(self, config=config)
 
-from vanna.remote import VannaDefault
-vn = VannaDefault(model=os.environ['VANNA_MODEL'], api_key=os.environ['VANNA_API_KEY'])
+vn = MyVanna(config={'api_key': 'sk-', 'model': 'gpt-3.5-turbo'})
+vn.connect_to_sqlite('SA.sqlite')
 
-vn.connect_to_snowflake(
-    account=os.environ['SNOWFLAKE_ACCOUNT'],
-    username=os.environ['SNOWFLAKE_USERNAME'],
-    password=os.environ['SNOWFLAKE_PASSWORD'],
-    database=os.environ['SNOWFLAKE_DATABASE'],
-    warehouse=os.environ['SNOWFLAKE_WAREHOUSE'],
-)
 
 # NO NEED TO CHANGE ANYTHING BELOW THIS LINE
 def requires_cache(fields):
